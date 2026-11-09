@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Barangay Complaint &amp; Report System</title>
+  <script>
+    /* Apply the saved theme before the page paints (no white flash). */
+    (function () {
+      try {
+        var t = localStorage.getItem("bc_theme");
+        if (t !== "dark" && t !== "light") t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="style.css?v=8">
+</head>
+<body data-page="home">
+
+  <!-- ===== LEFT SIDEBAR (edit the 3 menu links here) ===== -->
+  <aside class="sidebar" id="sidebar" aria-label="Main menu">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><path d="M20 3l14 5v10c0 9-6 16-14 19C12 34 6 27 6 18V8z" fill="#fff"/><path d="M20 12l8 6v9h-5v-6h-6v6h-5v-9z" fill="#1d4ed8"/></svg>
+      <span class="brand-text"><strong>Barangay Complaint &amp; Report System</strong><span>Community Concerns Desk</span></span>
+    </a>
+
+    <div class="side-label">Menu</div>
+    <nav class="side-nav">
+      <a href="index.html" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>
+        Home
+      </a>
+      <a href="index.html#report" data-view="report">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        Report an Incident
+      </a>
+      <a href="index.html#track" data-view="track">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        Track My Report <span class="nav-badge" id="badge-track" hidden>0</span>
+      </a>
+      <a href="admin-login.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+        Barangay Admin
+      </a>
+    </nav>
+
+    <div class="side-foot">
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode"><span class="theme-icon" aria-hidden="true"></span><span class="theme-label"></span></button>
+    </div>
+  </aside>
+  <div class="nav-overlay" id="navOverlay"></div>
+
+  <div class="page">
+    <div class="topbar">
+      <button class="menu-btn" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">&#9776;</button>
+      <strong>Barangay Complaint &amp; Report System</strong>
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode"><span class="theme-icon" aria-hidden="true"></span><span class="theme-label"></span></button>
+    </div>
+
+    <main class="container" id="app">
+
+      <!-- ===== VIEW 0: Home (default) ===== -->
+      <section id="home">
+        <div class="card hm-hero">
+          <div class="hm-hero-text">
+            <p class="hm-eyebrow" id="hmGreet">Welcome</p>
+            <h1 id="hmTitle">Barangay Complaint &amp; Report System</h1>
+            <p id="hmSub">Report a concern, follow its progress and tell us how we did.</p>
+          </div>
+          <div class="hm-actions">
+            <a class="btn" href="#report">Report an Incident</a>
+            <a class="btn btn-outline" href="#track">Track My Report</a>
+          </div>
+        </div>
+
+        <section class="hm-stats" id="hmStats" aria-label="My reports at a glance"></section>
+
+        <!-- Resolved reports that are waiting for the resident's stars -->
+        <section class="card hm-rate" id="hmRate" hidden>
+          <h2>&#9733; How did we do?</h2>
+          <p class="small muted">These reports are resolved. Rate how the officials handled them (1 to 5 stars).</p>
+          <div class="mini-list" id="hmRateList"></div>
+        </section>
+
+        <div class="grid-2">
+          <section class="card">
+            <div class="section-title">
+              <h2>My reports</h2>
+              <button type="button" class="btn btn-outline btn-sm" id="hmCsv">Download list (CSV)</button>
+            </div>
+            <div class="presets hm-filters" id="hmFilters" role="group" aria-label="Filter my reports"></div>
+            <div class="mini-list" id="hmReports"></div>
+          </section>
+
+          <div class="hm-col">
+            <section class="card" id="hmNotifCard">
+              <div class="section-title">
+                <h2>Latest updates</h2>
+                <button type="button" class="btn btn-outline btn-sm" id="hmReadAll">Mark all as read</button>
+              </div>
+              <div class="res-notifs" id="hmNotifs"></div>
+            </section>
+            <section class="card">
+              <h2>Emergency hotlines</h2>
+              <p class="small muted">For danger to life or property, call first, then report here.</p>
+              <ul class="hotlines" id="hmHotlines"></ul>
+            </section>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <section class="card">
+            <h2>Barangay snapshot</h2>
+            <p class="small muted">Based on the reports saved in this browser.</p>
+            <div class="hm-snap" id="hmSnap"></div>
+          </section>
+          <section class="card faq">
+            <h2>Good to know</h2>
+            <details><summary>What do the statuses mean?</summary><ul class="faq-list" id="hmStatusInfo"></ul></details>
+            <details><summary>What counts as urgent?</summary><p>Tick <strong>urgent</strong> only if the problem is dangerous or cannot wait: flooding, fallen wires, a blocked road in an emergency, or someone in danger. Urgent reports are shown to the officials first.</p></details>
+            <details><summary>How do I rate the officials?</summary><p>When a report is <strong>Resolved</strong> you can give 1 to 5 stars (5 is the best) and a comment. One rating per report.</p></details>
+            <details><summary>Why can't I see my report on another phone or computer?</summary><p>Reports are saved in the browser you used. Use <strong>Track My Report</strong> and type the report number (for example <code>BRG-0007</code>) to bring it into this browser.</p></details>
+          </section>
+        </div>
+      </section>
+
+      <!-- ===== VIEW 1: Report an Incident ===== -->
+      <section id="submit" hidden>
+        <div class="page-head">
+          <h1>Report an Incident</h1>
+          <p>Tell the barangay about garbage, drainage, roads, flooding, noise, and other concerns.</p>
+        </div>
+
+        <div class="card">
+          <div id="successMsg" class="alert alert-success" role="status" hidden>
+            <span id="successText">Your report has been successfully submitted and forwarded to the barangay officials for review.</span>
+            <br><span class="small" id="successNo"></span>
+            <br><a href="#track" class="small">Track this report &rarr;</a>
+          </div>
+          <div id="formError" class="alert alert-error" role="alert" hidden></div>
+
+          <form id="reportForm" novalidate>
+            <div class="form-grid">
+              <div class="field">
+                <label for="fullName">Full name <span class="req">*</span></label>
+                <input type="text" id="fullName" maxlength="100" autocomplete="name" required>
+              </div>
+              <div class="field">
+                <label for="contact">Contact number <span class="req">*</span></label>
+                <input type="tel" id="contact" maxlength="30" autocomplete="tel" placeholder="e.g. 0917 123 4567" required>
+              </div>
+              <div class="field">
+                <label for="type">Type of concern <span class="req">*</span></label>
+                <select id="type" required>
+                  <option value="">Select a concern...</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="location">Location of the problem <span class="req">*</span></label>
+                <input type="text" id="location" maxlength="200" placeholder="Street, purok / sitio, landmark" required>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="description">Description <span class="req">*</span></label>
+              <textarea id="description" maxlength="2000" placeholder="Tell us what happened, since when, and anything the officials should know." required></textarea>
+              <span class="hint">Press Enter to go to the next field. Press Shift + Enter for a new line. <span class="char-count" id="descCount" aria-live="off">0 / 2000</span></span>
+            </div>
+
+            <div class="field photo-field" id="photoField">
+              <div class="photo-head">
+                <span class="photo-title">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  Incident Photos <span class="photo-optional">(optional)</span>
+                </span>
+                <span class="photo-count" id="photoCount" aria-live="polite">0 / 3 photos</span>
+              </div>
+
+              <div class="photo-drop" id="photoDrop">
+                <div class="photo-slots" id="photoSlots">
+                  <!-- #photoAdd stays in the page; photo-uploader code in resident.js places the slots -->
+                  <button type="button" class="photo-slot photo-add" id="photoAdd" aria-label="Add photo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                    <span>Add Photo</span>
+                  </button>
+                  <div class="photo-slot photo-empty" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+                  <div class="photo-slot photo-empty" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>
+                </div>
+                <p class="photo-hint"><strong>Drag &amp; drop</strong> photos here or click <strong>Add Photo</strong>. JPG, PNG or WebP, max 5 MB each.</p>
+              </div>
+
+              <div class="alert alert-error photo-error" id="photoError" role="alert" hidden></div>
+              <input type="file" id="photo" class="visually-hidden" tabindex="-1" multiple
+                     accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-label="Choose incident photos">
+            </div>
+
+            <label class="urgent-check" for="urgent">
+              <input type="checkbox" id="urgent">
+              <span><strong>This is urgent and needs priority</strong>
+              <small>Tick this only if the problem is dangerous or cannot wait (for example flooding, fallen wires or someone in danger). Officials will see it first.</small></span>
+            </label>
+
+            <button type="submit" class="btn" id="submitBtn">Submit Report</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- ===== VIEW 2: Track My Report ===== -->
+      <section id="my-reports" hidden>
+        <div class="page-head section-title">
+          <div>
+            <h1>Track My Report</h1>
+            <p>See the status and remarks from barangay officials.</p>
+          </div>
+          <span class="live-pill">Updates automatically</span>
+        </div>
+
+        <!-- Updates from the barangay (status changes and officer notes) -->
+        <div class="card" id="notifCard" hidden>
+          <div class="section-title">
+            <h2>Notifications <span class="count-pill" id="notifCount">0</span></h2>
+            <button type="button" class="btn btn-outline btn-sm" id="notifReadAll">Mark all as read</button>
+          </div>
+          <div class="res-notifs" id="resNotifs"></div>
+        </div>
+
+        <div class="card">
+          <div class="field">
+            <label for="trackNo">Have a report number? Look it up</label>
+            <div style="display:flex; gap:.5rem; flex-wrap:wrap">
+              <input type="text" id="trackNo" placeholder="e.g. BRG-0007" style="flex:1; min-width:200px">
+              <button type="button" class="btn btn-outline" id="trackBtn">Find Report</button>
+            </div>
+          </div>
+          <div id="trackMsg" class="alert alert-warn" hidden role="alert"></div>
+          <div id="trackResult" class="reports"></div>
+        </div>
+
+        <div class="card">
+          <h2>Reports sent from this browser</h2>
+          <div class="mini-stats" id="miniStats"></div>
+          <div id="reportList" class="reports">
+            <p class="empty">Loading&hellip;</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="resident.js"></script>
+</body>
+</html>

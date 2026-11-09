@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Admin Login - Barangay Complaint &amp; Report System</title>
+  <script>
+    /* Apply the saved theme before the page paints (no white flash). */
+    (function () {
+      try {
+        var t = localStorage.getItem("bc_theme");
+        if (t !== "dark" && t !== "light") t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="style.css?v=8">
+</head>
+<body data-page="admin-login">
+
+  <!-- ===== LEFT SIDEBAR (edit the 3 menu links here) ===== -->
+  <aside class="sidebar" id="sidebar" aria-label="Main menu">
+    <a class="brand" href="index.html">
+      <svg viewBox="0 0 40 40" width="38" height="38" aria-hidden="true"><path d="M20 3l14 5v10c0 9-6 16-14 19C12 34 6 27 6 18V8z" fill="#fff"/><path d="M20 12l8 6v9h-5v-6h-6v6h-5v-9z" fill="#1d4ed8"/></svg>
+      <span class="brand-text"><strong>Barangay Complaint &amp; Report System</strong><span>Community Concerns Desk</span></span>
+    </a>
+
+    <div class="side-label">Menu</div>
+    <nav class="side-nav">
+      <a href="index.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M10 20v-5h4v5"/></svg>
+        Home
+      </a>
+      <a href="index.html#report">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+        Report an Incident
+      </a>
+      <a href="index.html#track">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        Track My Report
+      </a>
+      <a href="admin-login.html" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.4 8.4 8 9 4.6-.6 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg>
+        Barangay Admin
+      </a>
+    </nav>
+
+    <div class="side-foot">
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode"><span class="theme-icon" aria-hidden="true"></span><span class="theme-label"></span></button>
+      Authorized barangay officials only.
+    </div>
+  </aside>
+  <div class="nav-overlay" id="navOverlay"></div>
+
+  <div class="page">
+    <div class="topbar">
+      <button class="menu-btn" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar">&#9776;</button>
+      <strong>Barangay Complaint &amp; Report System</strong>
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="Switch between light and dark mode"><span class="theme-icon" aria-hidden="true"></span><span class="theme-label"></span></button>
+    </div>
+
+  <main class="container">
+    <section class="card auth-card">
+      <h1 class="center" style="font-size:1.5rem">Barangay Official Login</h1>
+      <p class="center muted">Authorized barangay officials only.</p>
+
+      <div id="adminMsg" class="alert" hidden role="alert"></div>
+
+      <form id="adminLoginForm" novalidate>
+        <div class="field">
+          <label for="adminUser">Admin username</label>
+          <input type="text" id="adminUser" autocomplete="username" required>
+        </div>
+        <div class="field">
+          <label for="adminPassword">Password</label>
+          <input type="password" id="adminPassword" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-block" id="adminLoginBtn">Log In</button>
+      </form>
+      <p class="center small muted">Demo login: <code>admin</code> / <code>admin123</code> (change it in <code>storage.js</code>).</p>
+      <p class="center small muted">Residents don't need to log in: go to the <a href="index.html">home page</a> to report a concern.</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">Barangay Complaint &amp; Report System</footer>
+  </div>
+
+  <script src="storage.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
